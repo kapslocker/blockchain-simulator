@@ -17,8 +17,3 @@ The block propagates in the network just like individual transactions. Unspent
 transactions are all transactions heard but not included in the longest chain heard so far. 9. Each node maintains a tree of all blockchains heard since the start of the simulation. The
 node stores the time of arrival of every block in its tree. This information is written to a file at the end of the simulation.
 Use an appropriate visualisation tool to study the trees of different nodes. Experiment with choosing different values for different parameters (n, z, mean of transaction interarrival etc.) Summarize the structure of the tree for different types of nodes (fast, slow, low CPU, high CPU power etc.). How long are branches of the tree? Give insight to explain your observations.
-In your submission on moodle, submit a single zip file containing:
-1. Source code for simulator. You need not submit any code for the visualization tool.
-2. README file with instructions for compiling and running.
-3. A report summarizing your findings along with pictures of typical trees and appropriate
-insight.

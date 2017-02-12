@@ -1,5 +1,5 @@
 # blockchain-simulator
-In this assignment you will build your own discrete-event simulator for a P2P cryptocurrency network. This assignment can be done in groups consisting of at most 3 persons. The cryptocurrency network must have the following properties.
+In this assignment you will build your own discrete-event simulator for a P2P cryptocurrency network. This assignment can be done in groups consisting of at most 3 persons. The cryptocurrency network must have the following properties.<br />
 1. There are “n” peers, where “n” is set at the time of initiation of the network. Some of these nodes (say z% set at the start of the simulation) are labeled “slow” and the others “fast”. We will use this classification below.
 2. Each peer has a unique ID.
 3. Each peer generates transactions randomly in time. The interarrival between

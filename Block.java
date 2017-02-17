@@ -1,5 +1,4 @@
-public class Block
-{
+public class Block{
   int bID;
   long timestamp;
   Block previousBlock;

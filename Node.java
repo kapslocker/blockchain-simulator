@@ -1,26 +1,30 @@
 import java.util.*;
 
 public class Node{
-  int id;
+    int id;
   // ArrayList<Transaction> transactions;
   // ArrayList<Block> blocks;
-  ArrayList<Double> receivedStamps;
-  Random rn;
-  ArrayList<Node> peers;     //pointers to Nodes are stored here
-  boolean fast;
-  float coins;
+    ArrayList<Double> receivedStamps;
+    Random rn;
+    ArrayList<Node> peers;     //pointers to Nodes are stored here
+    boolean fast;
+    float coins;
 
-  Node(int id, int n, ArrayList<Node> all){
-    this.id = id;
-    receivedStamps = new ArrayList<Double>();
-    Collections.shuffle(all);
-    rn = new Random();
-    int numPeers = rn.nextInt(n-1) + 1;
-    peers = new ArrayList<Node>();
-    for(int i=0; i<numPeers; i++)
-      peers.add(all.get(i));
-  }
+    Node(int id, int n){
+        this.id = id;
+        receivedStamps = new ArrayList<Double>();
+    }
 
+    void setPeers(ArrayList<Node> all){
+        Collections.shuffle(all);
+        rn = new Random();
+        int numPeers = rn.nextInt(n-1) + 1;
+        peers = new ArrayList<Node>();
+        for(int i=0; i<numPeers; i++){
+            if(id != all.get(i).id)
+                peers.add(all.get(i));
+        }
+    }
   //When to update balance??
 
   /*Transaction generateTransaction(double lambda){
@@ -32,10 +36,10 @@ public class Node{
     return tr;
   }*/
 
-  void sendTransaction(Transaction tr){
-    for(int i=0; i<peers.size(); i++){
+    void sendTransaction(Transaction tr){
+        for(int i=0; i<peers.size(); i++){
       //getlatency
       //insert in arraylist
+        }
     }
-  }
 }

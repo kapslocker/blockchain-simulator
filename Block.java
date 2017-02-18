@@ -9,15 +9,16 @@ public class Block{
     HashSet<Transaction> transactions;
 
     Block(){
-        
+
     }
 
-    Block(int bID, double ts, Block prevBlock, int creatorID, int length ){
+    Block(int bID, double ts, Block prevBlock, int creatorID, int length){
         this.bID = bID;
         timestamp = ts;
         previousBlock = prevBlock;
         this.creatorID = creatorID;
         this.length = length;
+        this.transactions = new HashSet<Transaction>();
     }
 
     Block(Block blk){  //set length and previousBlock when using this constructor

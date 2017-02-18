@@ -8,23 +8,29 @@ public class Node{
     Random rn;
     ArrayList<Node> peers;     //pointers to Nodes are stored here
     boolean fast;
+    double lambda;
     float coins;
 
-    Node(int id, int n){
+    Node(int id, boolean fast, double lambda, float coins){
         this.id = id;
+        this.fast = fast;
+        this.lambda = lambda;
+        this.coins = coins;
         receivedStamps = new ArrayList<Double>();
+        peers = new ArrayList<Node>();
     }
 
-    void setPeers(ArrayList<Node> all){
+    void setPeers(int n, ArrayList<Node> all){
         Collections.shuffle(all);
         rn = new Random();
         int numPeers = rn.nextInt(n-1) + 1;
-        peers = new ArrayList<Node>();
+
         for(int i=0; i<numPeers; i++){
             if(id != all.get(i).id)
                 peers.add(all.get(i));
         }
     }
+
   //When to update balance??
 
   /*Transaction generateTransaction(double lambda){

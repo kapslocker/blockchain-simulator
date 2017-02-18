@@ -26,20 +26,37 @@ public class Event{
         switch(type){
             case 0:
                 // Block generate
+                System.out.println("Block Generate Event:");
+                System.out.println("Scheduled Time: " + Double.toString(scTime));
+                System.out.println("Node: " + Integer.toString(node.id));
                 generateBlock(s,crTime,scTime);
+                System.out.print("\n");
                 break;
             case 1:
                 // Transaction generate
+                System.out.println("Transaction Generate Event:");
+                System.out.println("Scheduled Time: " + Double.toString(scTime));
+                System.out.println("Node: " + Integer.toString(node.id));
                 generateTransaction(s);
-
+                System.out.print("\n");
                 break;
             case 2:
                 // Block receive
+                System.out.println("Block Receive Event:");
+                System.out.println("Scheduled Time: " + Double.toString(scTime));
+                System.out.println("Node: " + Integer.toString(node.id));
+                System.out.println("Block ID: " + Integer.toString(block.bID));
                 receiveBlock(s,scTime);
+                System.out.print("\n");
                 break;
             case 3:
                 // Transaction receive
-                //receiveTrans();
+                System.out.println("Transaction Receive Event:");
+                System.out.println("Scheduled Time: " + Double.toString(scTime));
+                System.out.println("Node: " + Integer.toString(node.id));
+                System.out.println("Transaction ID: " + Integer.toString(transaction.tID));
+                receiveTransaction(s, scTime);
+                System.out.print("\n");
                 break;
 
         }
@@ -50,12 +67,17 @@ public class Event{
       while(toID == node.id){
         toID = randomno.nextInt(s.n);
       }
-      float currCoins = s.nodes.get(toID).coins;
+      float currCoins = s.nodes.get(node.id).coins;
       float fraction = randomno.nextFloat();
+      System.out.println("NextFLoat: " + Float.toString(fraction));
       float transactionAmt = currCoins*fraction;
       Transaction newTransaction = new Transaction(s.currID, node.id, toID, transactionAmt);
+      System.out.println("New Transaction ID: " + Integer.toString(newTransaction.tID) + " From:" + Integer.toString(newTransaction.fromID) + " To: " + Integer.toString(newTransaction.toID) + " Amount: " + Double.toString(newTransaction.amount));
       s.currID++;
+      System.out.println("Before Coins: " + Float.toString(s.nodes.get(node.id).coins));
+    //   System.out.println("After Coins: " + Float.toString(s.nodes.get(node.id).coins));
       s.nodes.get(node.id).coins -= transactionAmt;
+      System.out.println("After Coins: " + Float.toString(s.nodes.get(node.id).coins));
       s.nodes.get(toID).coins += transactionAmt;
 
       //add transaction to current node's list
@@ -69,6 +91,9 @@ public class Event{
       s.queue.add(nextTransactionEvent);
 
       //create next receive event for its neighbours
+      if(s.nodes.get(node.id).peers == null)
+        System.out.println("Peers is NUll" + String.valueOf(node.id));
+
       int size = s.nodes.get(node.id).peers.size();
       for(int i=0; i<size; i++){
         Event receiveTransactionEvent;
@@ -94,7 +119,7 @@ public class Event{
             for(int i=0; i<node.peers.size(); i++){
                 if(node.peers.get(i).id != genNode.id){
                     double latency = s.simulateLatency(node.id, node.peers.get(i).id, 1);
-                    Event e = new Event(2, scheduledTime+latency, node.peers.get(i), null, tr, node);
+                    Event e = new Event(3, scheduledTime+latency, node.peers.get(i), null, tr, node);
                     e.crTime = scTime;
                     s.queue.add(e);
                 }
@@ -131,9 +156,9 @@ public class Event{
             blockReceived.length = len+1;
             blockReceived.previousBlock = blk;
             s.blocks.get(node.id).add(blockReceived);
-
+            s.nodes.get(node.id).receivedStamps.add(scheduledTime);
             /*for(int i=0; i<node.peers.size(); i++){       //Incorrect perhaps(How can a node know if its neighbour has a particular block)
-                boolean found = false; 
+                boolean found = false;
                 for(int j=0; j<s.blocks.get(node.peers.get(i).id).size(); j++){
                     if(block.bID == s.blocks.get(node.peers.get(i).id).bID){
                         found = true;
@@ -146,7 +171,7 @@ public class Event{
                     e.crTime = scTime;
                     s.queue.add(e);
                 }
-            }*/ 
+            }*/
 
             for(int i=0; i<node.peers.size(); i++){
                 if(node.peers.get(i).id != genNode.id){
@@ -184,10 +209,21 @@ public class Event{
             }
 
             blk = new Block(s.genBlockID(),scheduledTime, id, node.id, len + 1);
-
+            System.out.println("New Block ID: " + Integer.toString(blk.bID) + " Creator:" + Integer.toString(blk.creatorID) + " Length: " + Integer.toString(blk.length));
             for(int i = 0;i < s.transactions.get(node.id).size();i++){
                 Transaction t = s.transactions.get(node.id).get(i);
-                if(block.transactions.contains(t)){
+
+                int len1 = 0;
+                Block lastBlock = new Block();
+                for(int j=0; j<s.blocks.get(node.id).size(); j++){
+                    if(s.blocks.get(node.id).get(j).length > len1){
+                        len1 = s.blocks.get(node.id).get(j).length;
+                        lastBlock = s.blocks.get(node.id).get(j);
+                    }
+                }
+
+
+                if(lastBlock.transactions.contains(t)){
                     s.transactions.get(node.id).remove(i);
                 }
                 else{

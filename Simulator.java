@@ -1,6 +1,6 @@
 import java.util.*;
 
-private class TimeComparator implements Comparator<Event>{
+class TimeComparator implements Comparator<Event>{
   @Override
   public int compare(Event e1, Event e2){
     if(e1.scTime < e2.scTime)
@@ -12,17 +12,17 @@ private class TimeComparator implements Comparator<Event>{
 }
 
 public class Simulator{
-  final int n;
+  final int n = 42;
   Random rn;
-  static double currTime;
-  static float z;
-  static int prop_ij;
-  static int currID;
-  static int uniqueBlockID;
-  static PriorityQueue<Event> queue;
-  static ArrayList<ArrayList<Transaction>> transactions;
-  static ArrayList<ArrayList<Block>> blocks;
-  static ArrayList<Node> nodes;
+  double currTime;
+  float z;
+  int prop_ij;
+  int currID;
+  int uniqueBlockID;
+  PriorityQueue<Event> queue;
+  ArrayList<ArrayList<Transaction>> transactions;
+  ArrayList<ArrayList<Block>> blocks;
+  ArrayList<Node> nodes;
 
   Simulator(){
     Comparator<Event> comparator = new TimeComparator();

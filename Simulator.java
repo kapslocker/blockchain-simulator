@@ -108,16 +108,13 @@ public class Simulator{
       }
   }
 
-  void setPeers()
-  {
+  void setPeers(){
       int m = rn.nextInt((n-1)*(n-2)/2) + (n-1);
       Set<String> peerPairs= new HashSet<String>();
-      while(m>0)
-      {
+      while(m>0){
           int p1 = rn.nextInt(n);
           int p2 = p1;
-          while(p1 == p2)
-          {
+          while(p1 == p2){
               p2 = rn.nextInt(n);
           }
           String s;
@@ -131,8 +128,7 @@ public class Simulator{
       }
 
       Iterator<String> itr = peerPairs.iterator();
-      while(itr.hasNext())
-      {
+      while(itr.hasNext()){
           String s = itr.next();
           String[] splitPairs = s.split(" ");
           int p1 = Integer.parseInt(splitPairs[0]);
@@ -140,7 +136,6 @@ public class Simulator{
           nodes.get(p1).peers.add(nodes.get(p2));
           nodes.get(p2).peers.add(nodes.get(p1));
       }
-
   }
 
   double simulateLatency(int i, int j, int size){  //void??

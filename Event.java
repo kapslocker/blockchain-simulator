@@ -154,6 +154,7 @@ public class Event{
             Block blockReceived = new Block(block);      //Added Copy constructor(POSSIBLE BUG)
             blockReceived.length = len+1;
             blockReceived.previousBlock = blk;
+            blockReceived.timestamp = s.currTime;
             s.blocks.get(node.id).add(blockReceived);
             s.nodes.get(node.id).receivedStamps.add(scheduledTime);
 

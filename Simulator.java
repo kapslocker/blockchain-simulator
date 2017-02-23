@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 class TimeComparator implements Comparator<Event>{
   @Override
@@ -12,7 +13,7 @@ class TimeComparator implements Comparator<Event>{
 }
 
 public class Simulator{
-  static final int n = 10;         //take input
+  static final int n = 20;         //take input
   Random rn;
   double currTime;
   final double z = 0.5;      //take input
@@ -50,7 +51,8 @@ public class Simulator{
       for(int i=0; i<n; i++){
           nextRand = Math.random();
           float amount = 100*rn.nextFloat();
-          double mean = Math.random()*2;
+          //double mean = Math.random()*4;
+          double mean = 1.0;
           if(nextRand >= z){ //fast node
               newNode = new Node(i, true, mean, amount);
               nodes.add(newNode);
@@ -80,7 +82,7 @@ public class Simulator{
       for(int i=0; i<n; i++){
           genBlock = new Block(0, 0.0, null, -1, 1);
           blocks.get(i).add(genBlock);
-          System.out.println(blocks.get(i).get(0).length);
+          //System.out.println(blocks.get(i).get(0).length);
       }
 
       double lambda = 10;   //arbit value
@@ -101,7 +103,7 @@ public class Simulator{
       }
       for(int i=0; i<n; i++)
       {
-          System.out.print(Integer.toString(i) + " Peers: ");
+          //System.out.print(Integer.toString(i) + " Peers: ");
           int size = nodes.get(i).peers.size();
           for(int j=0; j<size; j++)
           {
@@ -168,12 +170,21 @@ public class Simulator{
     }
   }
 
-  void printNode(int pos){
+  void printNode(int pos, PrintWriter w){
       for(int i=0; i < blocks.get(pos).size(); i++){
-          if(blocks.get(pos).get(i).previousBlock != null)
-            System.out.println(String.valueOf(blocks.get(pos).get(i).previousBlock.bID) + "->" + String.valueOf(blocks.get(pos).get(i).bID));
+          if(blocks.get(pos).get(i).previousBlock != null){
+            w.println(String.valueOf(blocks.get(pos).get(i).previousBlock.bID) + "->" + String.valueOf(blocks.get(pos).get(i).bID));
+          }
+      }
+
+      w.println();
+
+      for(int i=0; i<blocks.get(pos).size(); i++){
+          w.println(String.valueOf(blocks.get(pos).get(i).bID) + ": " + String.valueOf(blocks.get(pos).get(i).timestamp));
+          //System.out.println(String.valueOf(blocks.get(pos).get(i).bID) + ": " + String.valueOf(blocks.get(pos).get(i).timestamp));
       }
   }
+
   int genBlockID(){
       return uniqueBlockID++;
   }
@@ -181,13 +192,25 @@ public class Simulator{
   public static void main(String[] args) {
       Simulator sim = new Simulator();
       sim.init();
-      System.out.println(sim.nodes.get(0).peers == null);
-      sim.doAllEvents(2.0);
+      //System.out.println(sim.nodes.get(0).peers == null);
+      sim.doAllEvents(4.0);
 
-      for(int i=0;i<sim.nodes.size();i++){
+      /*for(int i=0;i<sim.nodes.size();i++){
           if(sim.nodes.get(i).type){
-              sim.printNode(i);
+              sim.printNode(i, null);
               break;
+          }
+      }*/
+
+      for(int i=0;i<sim.blocks.size();i++){
+          PrintWriter writer;
+          try{
+            //FORMAT nodenumber_fast_cputype
+            writer = new PrintWriter(Integer.toString(i)+ "_" + Boolean.toString(sim.nodes.get(i).fast) + "_" + Boolean.toString(sim.nodes.get(i).type) +".txt", "UTF-8");
+            sim.printNode(i,writer);
+            writer.close();
+          }
+          catch(Exception e){
           }
       }
   }

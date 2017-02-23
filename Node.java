@@ -17,7 +17,7 @@ public class Node{
         this.fast = fast;
         this.lambda = lambda;
         this.coins = coins;
-        if(lambda > 1.0 ){
+        if(lambda > 0.5 ){
             this.type = true;
         }
         else{

@@ -12,7 +12,7 @@ class TimeComparator implements Comparator<Event>{
 }
 
 public class Simulator{
-  static final int n = 4;         //take input
+  static final int n = 10;         //take input
   Random rn;
   double currTime;
   final double z = 0.5;      //take input
@@ -50,12 +50,13 @@ public class Simulator{
       for(int i=0; i<n; i++){
           nextRand = Math.random();
           float amount = 100*rn.nextFloat();
+          double mean = Math.random()*2;
           if(nextRand >= z){ //fast node
-              newNode = new Node(i, true, 10.0, amount);
+              newNode = new Node(i, true, mean, amount);
               nodes.add(newNode);
           }
           else{                  //slow node
-              newNode = new Node(i, false, 10.0, amount);
+              newNode = new Node(i, false, mean, amount);
               nodes.add(newNode);
           }
       }
@@ -68,8 +69,10 @@ public class Simulator{
     //   }
 
       for(int i=0; i<n; i++){
-          for(int j=0; j<n; j++)
+          for(int j=0; j<n; j++){
             prop_ij[i][j] = rn.nextInt(491) + 10;
+            prop_ij[i][j] /= 1000.0;
+          }
       }
 
       //add genesys
@@ -102,9 +105,9 @@ public class Simulator{
           int size = nodes.get(i).peers.size();
           for(int j=0; j<size; j++)
           {
-              System.out.print(Integer.toString(nodes.get(i).peers.get(j).id) + " ");
+    //          System.out.print(Integer.toString(nodes.get(i).peers.get(j).id) + " ");
           }
-          System.out.print("\n");
+//          System.out.print("\n");
       }
   }
 
@@ -141,16 +144,18 @@ public class Simulator{
   double simulateLatency(int i, int j, int size){  //void??
     Node pi = nodes.get(i);
     Node pj = nodes.get(j);
-    int c_ij;
+    double c_ij;
     if(pi.fast && pj.fast)
-      c_ij = 100;
+      c_ij = 100000000.0;                         //bps
     else
-      c_ij = 5;
-    double b = (((float)size*8.0)/c_ij)*1000; //in microseconds
-    double lambda = (12*8.0)/c_ij;    //Mbps -> kb per ms
+      c_ij = 5000000.0;                           // bps
+    double b = (((float)size*8.0*100000.0)/c_ij);   //in seconds
+    double lambda = c_ij/(12*8000.0);               //bps
+//    System.out.println("Checking :" + Math.random());
     double c = Math.log(1-Math.random())/(-lambda);  //unit? millis?
-    System.out.println("Latency: " + Double.toString((prop_ij[i][j]+b+c)/5000));
-    return (prop_ij[i][j]+b+c)/5000;
+//    System.out.println("C : "+Double.toString(c)+ " "+ Double.toString(lambda));
+//    System.out.println("Latency: " + Double.toString((prop_ij[i][j]+b+c)));
+    return prop_ij[i][j]+b+c;
   }
 
   void doAllEvents(double endTime){
@@ -163,6 +168,12 @@ public class Simulator{
     }
   }
 
+  void printNode(int pos){
+      for(int i=0; i < blocks.get(pos).size(); i++){
+          if(blocks.get(pos).get(i).previousBlock != null)
+            System.out.println(String.valueOf(blocks.get(pos).get(i).previousBlock.bID) + "->" + String.valueOf(blocks.get(pos).get(i).bID));
+      }
+  }
   int genBlockID(){
       return uniqueBlockID++;
   }
@@ -171,6 +182,13 @@ public class Simulator{
       Simulator sim = new Simulator();
       sim.init();
       System.out.println(sim.nodes.get(0).peers == null);
-      sim.doAllEvents(100.0);
+      sim.doAllEvents(2.0);
+
+      for(int i=0;i<sim.nodes.size();i++){
+          if(sim.nodes.get(i).type){
+              sim.printNode(i);
+              break;
+          }
+      }
   }
 }

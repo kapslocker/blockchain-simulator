@@ -10,12 +10,19 @@ public class Node{
     boolean fast;
     double lambda;
     float coins;
+    boolean type;           // True => Fast CPU
 
     Node(int id, boolean fast, double lambda, float coins){
         this.id = id;
         this.fast = fast;
         this.lambda = lambda;
         this.coins = coins;
+        if(lambda > 1.0 ){
+            this.type = true;
+        }
+        else{
+            this.type = false;
+        }
         receivedStamps = new ArrayList<Double>();
         peers = new ArrayList<Node>();
     }

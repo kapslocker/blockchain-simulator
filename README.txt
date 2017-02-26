@@ -1,4 +1,4 @@
-Use the following commands to compile and execute the code:
+Go into the src folder and use the following commands to compile and execute the code. The  data for each block at the end of the simulation is stored in the outputs folder. 
 
 Compile: make
 

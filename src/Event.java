@@ -26,36 +26,18 @@ public class Event{
         switch(type){
             case 0:
                 // Block generate
-    /*            System.out.println("Block Generate Event:");
-                System.out.println("Scheduled Time: " + Double.toString(scTime));
-                System.out.println("Node: " + Integer.toString(node.id));
-*/                generateBlock(s,crTime,scTime);
-//                System.out.print("\n");
+                generateBlock(s,crTime,scTime);
                 break;
             case 1:
                 // Transaction generate
-/*                System.out.println("Transaction Generate Event:");
-                System.out.println("Scheduled Time: " + Double.toString(scTime));
-                System.out.println("Node: " + Integer.toString(node.id));
-*/                generateTransaction(s);
-//                System.out.print("\n");
+                generateTransaction(s);
                 break;
             case 2:
                 // Block receive
-                // System.out.println("Block Receive Event:");
-                // System.out.println("Scheduled Time: " + Double.toString(scTime));
-                // System.out.println("Node: " + Integer.toString(node.id));
-                // System.out.println("Block ID: " + Integer.toString(block.bID));
-                // System.out.print("\n");
                 receiveBlock(s,scTime);
                 break;
             case 3:
                 // Transaction receive
-                // System.out.println("Transaction Receive Event:");
-                // System.out.println("Scheduled Time: " + Double.toString(scTime));
-                // System.out.println("Node: " + Integer.toString(node.id));
-                // System.out.println("Transaction ID: " + Integer.toString(transaction.tID));
-                // System.out.print("\n");
                 receiveTransaction(s, scTime);
                 break;
 
@@ -69,22 +51,17 @@ public class Event{
       }
       float currCoins = s.nodes.get(node.id).coins;
       float fraction = randomno.nextFloat();
-//      System.out.println("NextFLoat: " + Float.toString(fraction));
       float transactionAmt = currCoins*fraction;
       Transaction newTransaction = new Transaction(s.currID, node.id, toID, transactionAmt);
-//      System.out.println("New Transaction ID: " + Integer.toString(newTransaction.tID) + " From:" + Integer.toString(newTransaction.fromID) + " To: " + Integer.toString(newTransaction.toID) + " Amount: " + Double.toString(newTransaction.amount));
       s.currID++;
-//      System.out.println("Before Coins: " + Float.toString(s.nodes.get(node.id).coins));
-    //   System.out.println("After Coins: " + Float.toString(s.nodes.get(node.id).coins));
       s.nodes.get(node.id).coins -= transactionAmt;
-//      System.out.println("After Coins: " + Float.toString(s.nodes.get(node.id).coins));
       s.nodes.get(toID).coins += transactionAmt;
 
       //add transaction to current node's list
       s.transactions.get(node.id).add(newTransaction);
 
       //create next transaction event for this node
-      double lambda = 10;   //arbit value                       //TODO; Parameterise
+      double lambda = 10;   //arbit value
       double t = Math.log(1-Math.random())/(-lambda);
       Event nextTransactionEvent = new Event(1, scTime + t, node, null, null, node);
       nextTransactionEvent.crTime = scTime;
@@ -151,7 +128,7 @@ public class Event{
                 }
             }
 
-            Block blockReceived = new Block(block);      //Added Copy constructor(POSSIBLE BUG)
+            Block blockReceived = new Block(block);      //Added Copy constructor()
             blockReceived.length = len+1;
             blockReceived.previousBlock = blk;
             blockReceived.timestamp = s.currTime;

@@ -13,10 +13,10 @@ class TimeComparator implements Comparator<Event>{
 }
 
 public class Simulator{
-  static final int n = 20;         //take input
+  static int n;         //take input
   Random rn;
   double currTime;
-  final double z = 0.5;      //take input
+  static double z;      //take input
   int currID;
   int uniqueBlockID;
   Comparator<Event> comparator;
@@ -38,7 +38,6 @@ public class Simulator{
     }
 
     rn = new Random();
-    //prop_ij = rn.nextInt(491) + 10;
     currTime = 0.0;
     uniqueBlockID = 1;      //0 for Gen block
     currID = 1;
@@ -51,7 +50,7 @@ public class Simulator{
       for(int i=0; i<n; i++){
           nextRand = Math.random();
           float amount = 100*rn.nextFloat();
-          //double mean = Math.random()*4;
+
           double mean = 1.0;
           if(nextRand >= z){ //fast node
               newNode = new Node(i, true, mean, amount);
@@ -65,10 +64,6 @@ public class Simulator{
 
 
       setPeers();
-    //   for(int i=0; i<n; i++){
-    //       ArrayList<Node> all = new ArrayList<Node>(nodes);
-    //       nodes.get(i).setPeers(n, all);
-    //   }
 
       for(int i=0; i<n; i++){
           for(int j=0; j<n; j++){
@@ -77,12 +72,11 @@ public class Simulator{
           }
       }
 
-      //add genesys
+      //add genesis block
       Block genBlock;
       for(int i=0; i<n; i++){
           genBlock = new Block(0, 0.0, null, -1, 1);
           blocks.get(i).add(genBlock);
-          //System.out.println(blocks.get(i).get(0).length);
       }
 
       double lambda = 10;   //arbit value
@@ -101,18 +95,10 @@ public class Simulator{
           newTransactionEvent = new Event(1, t, nodes.get(i), null, null, null);
           queue.add(newTransactionEvent);
       }
-      for(int i=0; i<n; i++)
-      {
-          //System.out.print(Integer.toString(i) + " Peers: ");
-          int size = nodes.get(i).peers.size();
-          for(int j=0; j<size; j++)
-          {
-    //          System.out.print(Integer.toString(nodes.get(i).peers.get(j).id) + " ");
-          }
-//          System.out.print("\n");
-      }
   }
-
+/*
+* Creates node pairs and adds them to the Graph.
+*/
   void setPeers(){
       int m = rn.nextInt((n-1)*(n-2)/2) + (n-1);
       Set<String> peerPairs= new HashSet<String>();
@@ -142,8 +128,10 @@ public class Simulator{
           nodes.get(p2).peers.add(nodes.get(p1));
       }
   }
-
-  double simulateLatency(int i, int j, int size){  //void??
+/*
+* Return Latency between two nodes i,j
+*/
+  double simulateLatency(int i, int j, int size){
     Node pi = nodes.get(i);
     Node pj = nodes.get(j);
     double c_ij;
@@ -153,10 +141,7 @@ public class Simulator{
       c_ij = 5000000.0;                           // bps
     double b = (((float)size*8.0*100000.0)/c_ij);   //in seconds
     double lambda = c_ij/(12*8000.0);               //bps
-//    System.out.println("Checking :" + Math.random());
-    double c = Math.log(1-Math.random())/(-lambda);  //unit? millis?
-//    System.out.println("C : "+Double.toString(c)+ " "+ Double.toString(lambda));
-//    System.out.println("Latency: " + Double.toString((prop_ij[i][j]+b+c)));
+    double c = Math.log(1-Math.random())/(-lambda); // Exponential Distribution
     return prop_ij[i][j]+b+c;
   }
 
@@ -169,7 +154,9 @@ public class Simulator{
         e.execute(this);
     }
   }
-
+  /*
+  * Prints data to be used for visualisation for a given node.
+  */
   void printNode(int pos, PrintWriter w){
       for(int i=0; i < blocks.get(pos).size(); i++){
           if(blocks.get(pos).get(i).previousBlock != null){
@@ -181,7 +168,6 @@ public class Simulator{
 
       for(int i=0; i<blocks.get(pos).size(); i++){
           w.println(String.valueOf(blocks.get(pos).get(i).bID) + ": " + String.valueOf(blocks.get(pos).get(i).timestamp));
-          //System.out.println(String.valueOf(blocks.get(pos).get(i).bID) + ": " + String.valueOf(blocks.get(pos).get(i).timestamp));
       }
   }
 
@@ -189,29 +175,55 @@ public class Simulator{
       return uniqueBlockID++;
   }
 
-  public static void main(String[] args) {
-      Simulator sim = new Simulator();
-      sim.init();
-      //System.out.println(sim.nodes.get(0).peers == null);
-      sim.doAllEvents(4.0);
+  static void fetchInput(String[] inp)throws IllegalStateException{
+      if(inp==null || inp.length==0){
+          System.out.println("Please enter the values of N and Z. See Usage for format.");
+          throw new IllegalStateException();
+      }
+      if(inp[0].equals("-h") || inp[0].equals("--help")){
+          System.out.println("Usage: ");
+          System.out.println("java Simulator n z");
+          System.out.println("n\tNo. of nodes in the simulation.");
+          System.out.println("z\tpercentage of SLOW nodes in the network. (0-1)");
+          throw new IllegalStateException();
+      }
+      if(inp.length<2){
+          System.out.println("Missing values. See Usage for format");
+          throw new IllegalStateException();
+      }
+      try{
+          n = Integer.parseInt(inp[0]);
+          z = Double.parseDouble(inp[1]);
+          //System.out.println(inp[0] + inp[1]);
 
-      /*for(int i=0;i<sim.nodes.size();i++){
-          if(sim.nodes.get(i).type){
-              sim.printNode(i, null);
-              break;
-          }
-      }*/
-
-      for(int i=0;i<sim.blocks.size();i++){
-          PrintWriter writer;
-          try{
-            //FORMAT nodenumber_fast_cputype
-            writer = new PrintWriter(Integer.toString(i)+ "_" + Boolean.toString(sim.nodes.get(i).fast) + "_" + Boolean.toString(sim.nodes.get(i).type) +".txt", "UTF-8");
-            sim.printNode(i,writer);
-            writer.close();
-          }
-          catch(Exception e){
-          }
+      }catch(Exception e){
+          System.out.println("n(z) need to be of type Integer(Double)");
+          throw new IllegalStateException();
       }
   }
+    public static void main(String[] args) {
+        try{
+            fetchInput(args);
+            Simulator sim = new Simulator();
+            sim.init();
+            sim.doAllEvents(4.0);                       // Simulation runs for a simulated duration of 4 seconds.
+            for(int i=0;i<sim.blocks.size();i++){
+                PrintWriter writer;
+                try{
+                    //FORMAT: nodenumber_fast_cputype (fast = true for fast node and vice-versa)
+                    writer = new PrintWriter("../outputs/"+Integer.toString(i)+ "_" +
+                            Boolean.toString(sim.nodes.get(i).fast) + "_" +
+                            Boolean.toString(sim.nodes.get(i).type) +".txt", "UTF-8");
+                    sim.printNode(i,writer);
+                    writer.close();
+                }
+                catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+        catch(Exception e){
+        }
+
+    }
 }

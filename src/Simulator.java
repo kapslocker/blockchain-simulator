@@ -183,8 +183,8 @@ public class Simulator{
       if(inp[0].equals("-h") || inp[0].equals("--help")){
           System.out.println("Usage: ");
           System.out.println("java Simulator n z");
-          System.out.println("n\tNo. of nodes in the simulation.");
-          System.out.println("z\tpercentage of SLOW nodes in the network. (0-1)");
+          System.out.println("n\tNumber of nodes in the simulation.");
+          System.out.println("z\tpFraction of SLOW nodes in the network. (0-1)");
           throw new IllegalStateException();
       }
       if(inp.length<2){
